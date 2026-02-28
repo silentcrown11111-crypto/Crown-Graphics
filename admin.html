@@ -64,12 +64,59 @@
         }
 
         .status-badge {
-            background: rgba(16, 185, 129, 0.2);
-            color: #10b981;
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: 600;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .status-active {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-completed {
+            background: rgba(34, 197, 94, 0.2);
+            color: #22c55e;
+        }
+
+        .status-cancelled {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            border: 1px solid var(--border-glass);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-right: 4px;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-accent);
+            border-color: var(--primary-accent);
+        }
+
+        .action-approve {
+            color: #10b981;
+        }
+
+        .action-complete {
+            color: #3b82f6;
+        }
+
+        .action-cancel {
+            color: #ef4444;
         }
 
         .empty-state {
@@ -125,6 +172,7 @@
                         <th>Contact (Email / Method)</th>
                         <th>Custom Requirements</th>
                         <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody id="ordersBody">

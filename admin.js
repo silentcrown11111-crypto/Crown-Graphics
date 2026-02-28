@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('ordersTable').style.display = 'table';
         ordersBody.innerHTML = '';
 
-        orders.forEach(order => {
+        orders.forEach((order, index) => {
             const tr = document.createElement('tr');
 
             const reqPreview = order.requirements.length > 50
@@ -58,6 +58,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const contactHtml = order.delivery === 'whatsapp'
                 ? `<i class="fab fa-whatsapp" style="color: #10b981;"></i> ${order.phone}<br><small>${order.email}</small>`
                 : `<i class="fas fa-envelope" style="color: var(--primary-accent);"></i> ${order.email}`;
+
+            // Map status to CSS classes
+            let statusClass = 'status-pending';
+            if (order.status.toLowerCase().includes('pending')) statusClass = 'status-pending';
+            if (order.status.toLowerCase().includes('active')) statusClass = 'status-active';
+            if (order.status.toLowerCase().includes('completed')) statusClass = 'status-completed';
+            if (order.status.toLowerCase().includes('cancelled')) statusClass = 'status-cancelled';
+
+            // Action buttons
+            let actionsHtml = '';
+            if (order.status === 'Pending Review') {
+                actionsHtml += `<button class="action-btn action-approve" onclick="updateOrderStatus('${order.id}', 'Active')"><i class="fas fa-check"></i> Approve</button>`;
+            }
+            if (order.status === 'Active') {
+                actionsHtml += `<button class="action-btn action-complete" onclick="updateOrderStatus('${order.id}', 'Completed')"><i class="fas fa-flag-checkered"></i> Complete</button>`;
+            }
+            if (order.status !== 'Cancelled' && order.status !== 'Completed') {
+                actionsHtml += `<button class="action-btn action-cancel" onclick="updateOrderStatus('${order.id}', 'Cancelled')"><i class="fas fa-times"></i> Cancel</button>`;
+            }
+            if (order.status === 'Cancelled' || order.status === 'Completed') {
+                actionsHtml += `<small style="opacity: 0.5;">No actions</small>`;
+            }
 
             tr.innerHTML = `
                 <td style="font-weight: 600;">${order.id}</td>
@@ -69,10 +91,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 </td>
                 <td>${contactHtml}</td>
                 <td title="${order.requirements}" style="color: var(--text-secondary); font-size: 0.9rem; max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${reqPreview}</td>
-                <td><span class="status-badge">${order.status}</span></td>
+                <td><span class="status-badge ${statusClass}">${order.status}</span></td>
+                <td>${actionsHtml}</td>
             `;
             ordersBody.appendChild(tr);
         });
+    };
+
+    // Global function for status updates
+    window.updateOrderStatus = (orderId, newStatus) => {
+        let orders = JSON.parse(localStorage.getItem('crown_orders')) || [];
+        const orderIndex = orders.findIndex(o => o.id === orderId);
+
+        if (orderIndex !== -1) {
+            orders[orderIndex].status = newStatus;
+            localStorage.setItem('crown_orders', JSON.stringify(orders));
+            loadOrders(); // Refresh table
+        }
     };
 
     if (clearDataBtn) {
